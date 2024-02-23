@@ -1,0 +1,1 @@
+[{"method": "POST", "path": "/create-page", "url": "https://designergpt.replit.app/create-page", "content_type": "application/json", "example_body": {}, "full_request": "POST https://designergpt.replit.app/create-page HTTP/2\nContent-Type: application/json\n\n{}"}]

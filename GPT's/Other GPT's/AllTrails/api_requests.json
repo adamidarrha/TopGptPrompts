@@ -1,0 +1,32 @@
+[
+  {
+    "method": "POST",
+    "path": "/search-trails",
+    "url": "https://chatgpt-production.alltrails.com/search-trails",
+    "content_type": "application/json",
+    "example_body": {
+      "country_name": "<value>",
+      "state_name": "<value>",
+      "city_name": "<value>",
+      "area_name": "<value>",
+      "location_helper": "<value>",
+      "radius": "<value>",
+      "sort_by_dist_bool": "<value>",
+      "activities": "<value>",
+      "features": "<value>",
+      "query": "<value>",
+      "difficulty_rating": "<value>",
+      "route_type": "<value>",
+      "visitor_usage": "<value>",
+      "length": "<value>",
+      "elevation_gain": "<value>",
+      "highest_point": "<value>",
+      "avg_rating": "<value>",
+      "duration_minutes": "<value>",
+      "num_trails": "<value>",
+      "raw_query": "<value>",
+      "filters": "<value>"
+    },
+    "full_request": "POST https://chatgpt-production.alltrails.com/search-trails HTTP/2\nContent-Type: application/json\n\n{\n    \"country_name\": \"<value>\",\n    \"state_name\": \"<value>\",\n    \"city_name\": \"<value>\",\n    \"area_name\": \"<value>\",\n    \"location_helper\": \"<value>\",\n    \"radius\": \"<value>\",\n    \"sort_by_dist_bool\": \"<value>\",\n    \"activities\": \"<value>\",\n    \"features\": \"<value>\",\n    \"query\": \"<value>\",\n    \"difficulty_rating\": \"<value>\",\n    \"route_type\": \"<value>\",\n    \"visitor_usage\": \"<value>\",\n    \"length\": \"<value>\",\n    \"elevation_gain\": \"<value>\",\n    \"highest_point\": \"<value>\",\n    \"avg_rating\": \"<value>\",\n    \"duration_minutes\": \"<value>\",\n    \"num_trails\": \"<value>\",\n    \"raw_query\": \"<value>\",\n    \"filters\": \"<value>\"\n}"
+  }
+]

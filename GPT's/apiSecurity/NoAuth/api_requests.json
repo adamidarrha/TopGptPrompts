@@ -1,0 +1,1 @@
+[{"method": "GET", "path": "/location", "url": "https://weather.example.com/location", "content_type": "application/json", "full_request": "GET https://weather.example.com/location HTTP/2\nContent-Type: application/json\n\n"}]

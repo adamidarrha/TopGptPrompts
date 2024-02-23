@@ -1,0 +1,1 @@
+[{"method": "POST", "path": "/api/studyx/v5/cloud/question/getQuestionAnswers", "url": "https://gpts.studyx.ai/api/studyx/v5/cloud/question/getQuestionAnswers", "content_type": "application/json", "example_body": {}, "full_request": "POST https://gpts.studyx.ai/api/studyx/v5/cloud/question/getQuestionAnswers HTTP/2\nContent-Type: application/json\n\n{}"}]

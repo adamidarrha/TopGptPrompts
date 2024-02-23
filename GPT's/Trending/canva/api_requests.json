@@ -1,0 +1,1 @@
+[{"method": "GET", "path": "/designs", "url": "https://chatgpt-plugin.canva.com/designs", "content_type": "application/json", "full_request": "GET https://chatgpt-plugin.canva.com/designs HTTP/2\nContent-Type: application/json\n\n"}]

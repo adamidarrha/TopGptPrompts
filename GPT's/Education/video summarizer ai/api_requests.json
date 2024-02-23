@@ -1,0 +1,1 @@
+[{"method": "GET", "path": "/captions/{video_id}/{index}", "url": "https://process.videosummarizerai.com/captions/{video_id}/{index}", "content_type": "application/json", "full_request": "GET https://process.videosummarizerai.com/captions/{video_id}/{index} HTTP/2\nContent-Type: application/json\n\n"}]

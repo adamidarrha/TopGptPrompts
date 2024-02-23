@@ -1,0 +1,1 @@
+[{"method": "GET", "path": "/api/internal/_rg/khanmigo/search_content", "url": "https://khanacademy.org/api/internal/_rg/khanmigo/search_content", "content_type": "application/json", "full_request": "GET https://khanacademy.org/api/internal/_rg/khanmigo/search_content HTTP/2\nContent-Type: application/json\n\n"}]

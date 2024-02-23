@@ -1,0 +1,1 @@
+[{"method": "POST", "path": "/astro-gpt", "url": "https://authorityastrology.com/api/astro-gpt", "content_type": "application/json", "example_body": {}, "full_request": "POST https://authorityastrology.com/api/astro-gpt HTTP/2\nContent-Type: application/json\n\n{}"}]

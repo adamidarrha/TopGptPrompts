@@ -1,0 +1,20 @@
+{
+  "settings": [
+    {
+      "action_id": "g-0c245e918a1b944a414c8bdb100bf31a0aab6298",
+      "action_settings": null,
+      "operations": {
+        "d6d68ae0c9d33cf081d8cf435a9c6e17fb61b257": {
+          "id": "summarize",
+          "description": "Provide the summary or highlights of the PDF linked. ALWAYS PROVIDE QUOTES AND PAGE CITIATIONS. Add at the end of your summary this We finished processing the whole document with the PDF Search plugin. What else would you like to know?",
+          "is_consequential": false
+        },
+        "19349d7a78f9b2a89d79b4e8e2f417155010844e": {
+          "id": "upload_and_search_pdf",
+          "description": "Semantic query into a URL link to a document. THINK STEP BY STEP. ALWAYS PROVIDE QUOTES AND PAGE CITIATIONS. BREAK COMPLEX QUESTIONS INTO SEVERAL QUERIES.",
+          "is_consequential": false
+        }
+      }
+    }
+  ]
+}

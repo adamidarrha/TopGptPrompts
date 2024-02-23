@@ -1,0 +1,9 @@
+[
+  {
+    "method": "GET",
+    "path": "/quick_search",
+    "url": "https://chat.consensus.app//quick_search",
+    "content_type": "application/json",
+    "full_request": "GET https://chat.consensus.app//quick_search HTTP/2\nContent-Type: application/json\n\n"
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": "d1c0099d",
+      "title": "Help me study",
+      "description": "vocabulary for a college entrance exam",
+      "prompt": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option."
+    },
+    {
+      "id": "bd372e53",
+      "title": "Recommend activities",
+      "description": "for a team-building day with remote employees",
+      "prompt": "Can you recommend a couple icebreaker activities for a team-building day at work? We have remote employees, and want to make them feel included."
+    },
+    {
+      "id": "c25a3687",
+      "title": "Show me a code snippet",
+      "description": "of a website's sticky header",
+      "prompt": "Show me a code snippet of a website's sticky header in CSS and JavaScript."
+    },
+    {
+      "id": "4284aa0c",
+      "title": "Make up a story",
+      "description": "about Sharky, a tooth-brushing shark superhero",
+      "prompt": "Make up a 5-sentence story about \"Sharky\", a tooth-brushing shark superhero. Make each sentence a bullet point."
+    }
+  ],
+  "total": 4,
+  "limit": 4,
+  "offset": -1
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "method": "POST",
+    "path": "/action/search",
+    "url": "https://api.cybernewsgpt.com/action/search",
+    "content_type": "application/json",
+    "example_body": {
+      "keyword": "<string>"
+    },
+    "full_request": "POST https://api.cybernewsgpt.com/action/search HTTP/2\nContent-Type: application/json\n\n{\n    \"keyword\": \"<string>\"\n}"
+  },
+  {
+    "method": "POST",
+    "path": "/action/search_by_dates",
+    "url": "https://api.cybernewsgpt.com/action/search_by_dates",
+    "content_type": "application/json",
+    "example_body": {
+      "keyword": "<string>",
+      "start_date": "<string>",
+      "end_date": "<string>"
+    },
+    "full_request": "POST https://api.cybernewsgpt.com/action/search_by_dates HTTP/2\nContent-Type: application/json\n\n{\n    \"keyword\": \"<string>\",\n    \"start_date\": \"<string>\",\n    \"end_date\": \"<string>\"\n}"
+  },
+  {
+    "method": "POST",
+    "path": "/action/search_category_by_dates",
+    "url": "https://api.cybernewsgpt.com/action/search_category_by_dates",
+    "content_type": "application/json",
+    "example_body": {
+      "cat": "<string>",
+      "start_date": "<string>",
+      "end_date": "<string>"
+    },
+    "full_request": "POST https://api.cybernewsgpt.com/action/search_category_by_dates HTTP/2\nContent-Type: application/json\n\n{\n    \"cat\": \"<string>\",\n    \"start_date\": \"<string>\",\n    \"end_date\": \"<string>\"\n}"
+  },
+  {
+    "method": "POST",
+    "path": "/action/search_by_month_of_year",
+    "url": "https://api.cybernewsgpt.com/action/search_by_month_of_year",
+    "content_type": "application/json",
+    "example_body": {
+      "month": "<string>",
+      "year": "<string>"
+    },
+    "full_request": "POST https://api.cybernewsgpt.com/action/search_by_month_of_year HTTP/2\nContent-Type: application/json\n\n{\n    \"month\": \"<string>\",\n    \"year\": \"<string>\"\n}"
+  }
+]

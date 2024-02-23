@@ -1,0 +1,464 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "AllTrails",
+    "version": "1.0.0",
+    "description": "Allows users to retrieve a list of trails based on search criteria."
+  },
+  "servers": [
+    {
+      "url": "https://chatgpt-production.alltrails.com"
+    }
+  ],
+  "paths": {
+    "/search-trails": {
+      "post": {
+        "operationId": "searchTrails",
+        "x-openai-isConsequential": false,
+        "summary": "Retrieves trail(s) from AllTrails that match the user's query.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Query"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of trails retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "An array of trail objects that includes trail metadata.",
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Trail"
+                        }
+                      }
+                    },
+                    "assumed_location": {
+                      "description": "This parameter represents the location that AllTrails has assumed based on the user's input. Given the potential ambiguity when users provide only a city_name or area_name that might be common worldwide, AllTrails queries Algolia for the most likely match. While the majority of the time the location is accurate, there are instances where it might not align with the user's intended location.\nIn the case that a 'worldwide' search is performed, this parameter will be populated to 'worldwide'. In this case, state that the results are worldwide and do not include a specific location.\n\nThis parameter MUST be communicated word-for-word to the user at the start of the response. For example, if `assumed_location` is \"Hanover, New Hampshire, United States\", then the output should start by mentioning the full detailed location e.g. 'Here are some trails in Hanover, New Hampshire, United States ...'. \n\nThe assistant should always check the `assumed_location` with the user to verify that the recommendations are for the intended area. If there's a discrepancy, users might need to provide more specific location details in their query to get accurate trail recommendations.\n",
+                      "schema": {
+                        "type": "string"
+                      }
+                    },
+                    "EXTRA_INFORMATION_FOR_ASSISTANT": {
+                      "description": "This parameter includes additional instructions for how the assistant should output results to the user.\n",
+                      "schema": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "A 204 status code is used when the server successfully processes the request, but there is no content to return to the client.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A 400 status code is used for bad requests.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "A 401 status code is used when the user is not authenticated. Access token is missing or invalid.\n"
+          },
+          "500": {
+            "description": "A 500 status code is used when server has encountered an unexpected condition or configuration problem that prevents it from fulfilling the request made by the client.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "ERROR_MESSAGE": {
+            "description": "When an error occurs, the assistant should:\n\n1. Use this message to determine the nature of the error:\n  - If the error message indicates a configuration or internal issue, the assistant should acknowledge the error, inform the user that it's a technical issue not caused by their input, and suggest trying again later.\n  - If the error message points to an issue with the query construction, such as \"filter string is invalid\", the assistant should recognize its own mistake in formulating the request. It should then re-prompt the user with a clarified request or provide an alternative solution.\n2. In cases where the error's root cause is ambiguous or not explicitly mentioned in the `ERROR_MESSAGE`, the assistant should handle the situation gracefully, apologizing for the inconvenience and suggesting potential corrective actions or alternative queries.\n\nThe primary goal is to ensure a smooth user experience. the assistant should always strive to be self-correcting, avoid placing blame on the user, and provide clear directions or alternatives when errors arise.\n",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Query": {
+        "type": "object",
+        "properties": {
+          "country_name": {
+            "description": "Full name of the country where trails are located. If the user does not explicitly specify the `country_name` parameter, the `country_name` parameter should be deduced from the `state_name`, `city_name`, or `area_name` parameter. \n\nFor example, if user asks for 'trails in San Francisco', automatically set the `country_name` parameter to 'United States' and the `state_name` parameter to 'California'.\n\nIf the user specifies they're interested in trails around the world, set `country_name` to 'world'.\n\nThis parameter MUST always be populated.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "state_name": {
+            "description": "Full name of the state or region where trails are located. If not given, the `state_name` parameter should be deduced from the `city_name`, or `area_name` parameter. \n\nFor example, if user asks for trails in Rochester, automatically set `country_name` to 'United States' and `state_name`='New Hampshire'.\n\nThis parameter MUST be populated whenever a user mentions a specific state, city, or area. \n\nAlways ensure the state or region name is in its full form, not abbreviated.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "city_name": {
+            "description": "This parameter represents the full name of the city or town where trails are located and MUST be populated if a user specifies a city in their query.\n\nTo determine its value:\n1. If the user explicitly mentions a city or town, use that city's full name. For instance, if a user says 'trails in San Francisco', set `city_name` to 'San Francisco'.\n2. Do NOT populate this parameter if the user's query is about specific parks, forests, or wilderness areas. For example, if the user asks for trails in Yellowstone, omit the `city_name` parameter entirely.\n\nAlways ensure the city or town name is in its full form, not abbreviated or shortened.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "area_name": {
+            "description": "This parameter represents the full name of a national, state, city, or local park, forest, or wilderness area and MUST be populated if a user specifies such an area in their query.\n\nTo determine its value:\n1. If the user explicitly mentions a specific park, forest, or wilderness area, use its full name. For instance, if a user says 'trails in Tahoe', set `area_name` to 'Tahoe National Forest'.\n2. If the user provides a well-known abbreviation or shortened name of an area, deduce the full name. For example, if the user asks for trails in 'Yosemite', set `area_name` to 'Yosemite National Park'.\n\nAlways ensure the area name is in its complete and accurate form.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "location_helper": {
+            "description": "This parameter specifies if the user wants to find trails \"in\" or \"near\" the request of their specified location.\n\nTo determine the appropriate value:\n1. If the user provides a broad or non-specific location, such as a state or a country (i.e. if area_name and city_name are not populated), then 'location_helper' should ALWAYS be set to 'in', regardless of the user's phrasing.\n2. If the user specifies a more granular or specific location, like a city or an area (i.e. if area_name or city_name is populated), then the value can be set to 'near' if the user's query indicates proximity (e.g. 'trails near...'). \n\nFor clarity:\n- If a user says 'trails in San Francisco' or 'trails in Yellowstone National Park', then 'location_helper' should be set to 'in'.\n- If a user says 'trails near San Francisco' or 'trails near Yellowstone National Park', then 'location_helper' should be set to 'near'.\n- If a user says 'trails in California' or 'trails in the United States', then 'location_helper' should be set to 'in'.\n- If a user says 'trails near California' or 'trails near the United States', then 'location_helper' should be set to 'in'.\n",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "in",
+                "near"
+              ],
+              "default": "in"
+            }
+          },
+          "radius": {
+            "description": "This parameter specifies the search radius centered around a given location, represented IN METERS. It's crucial to determine its value based on the user's query and the `location_helper` parameter.\n\nTo determine its value:\n1. If `location_helper` is set to 'in', DO NOT populate this parameter.\n2. If `location_helper` is set to 'near':\n  - If the user provides a specific distance, convert that distance to meters and use it. For example, if a user says 'trails within 10 miles of Greenpoint, Brooklyn', set `radius` to 16093 meters.\n  - If the user doesn't specify a distance, default `radius` to 32187 meters (approximately 20 miles). Ensure to notify the user of this default value in the response.\n\nAlways ensure the value for `radius` is an integer. If conversions result in a float, round up or down to the nearest whole number.\n",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "sort_by_dist_bool": {
+            "description": "If the user explicitly emphasizes that they would like the results sorted by distance (e.g. 'closest trails to Seattle'), then `sort_by_dist_bool` should be set to `true`. \n\nIf the user simply says that they're interested in results near a location, assume that the user wants their results returned in the default popularity-based order.\n",
+            "schema": {
+              "type": "boolean",
+              "enum": [
+                true,
+                false
+              ],
+              "default": false
+            }
+          },
+          "activities": {
+            "description": "The 'activities' parameter is utilized to filter trails based on specific outdoor activities they accommodate. It's imperative to accurately interpret the user's query to populate this parameter.\n\nTo determine its values:\n1. Match the user's mentioned activities with the provided enums. For instance, if a user says 'trails with bike paths', set `activities` to ['mountain-biking', 'road-biking'].\n2. It's crucial to distinguish between `activities` and `features`. Activities typically involve actions, often ending in '-ing' (e.g. 'hiking', 'biking'). NEVER list features, such as 'dogs' or 'waterfall', under `activities`. Always cross-reference with the provided enums to ensure accuracy.\n3. If the user's mentioned activities don't align with the provided enums, inform the user of the available activity options and seek further clarification.\n\nHere is a dictionary for the enums:\n- backpacking: Outdoor recreation of carrying gear on one's back while hiking for more than a day. \n- birding: Bird-seeing, anything related to birds.\n- camping: Camping.\n- xc-skiing: The sport of skiing across the countryside, often through woods and usually on relatively flat terrain.\n- fishing: Fishing.\n- hiking: The activity of going for long walks in the country or woods.\n- horses: Anything to do with horses.\n- mountain-biking: Mountain biking is a sport of riding bicycles off-road, often over rough terrain, usually using specially designed mountain bikes.\n- off-road-driving: Off-roading is the activity of driving or riding in a vehicle on unpaved surfaces such as sand, dirt, gravel, riverbeds, mud, snow, rocks, and other natural terrain.\n- paddle-sports: Any sport involving the propulsion of a watercraft by means of a paddle. Kayaking and canoeing are paddlesports.\n- road-biking: Road cycling is the a form of cycling in which cyclists ride on paved roadways.\n- rock-climbing: The sport or activity of climbing rock faces, especially with the aid of ropes and special equipment.\n- scenic-driving: Scenic driving. Driving courses with good views.\n- skiing: The action of traveling over snow on skis, especially as a sport or recreation.\n- snowshoeing: The activity of walking over snow wearing snowshoes.\n- trail-running: A type of running that takes place on outdoor trails, often in mountainous terrain, and often includes significant ascents and descents.\n- walking: Walking.\n- bike-touring: Bike touring. Bicycle touring can range from single-day trips to extended travels spanning weeks or months\n- via-ferrata: A protected climbing route found in the Alps and certain other Alpine locations. The protection includes steel fixtures such as cables and railings to arrest the effect of any fall, which the climber can either hold onto or clip into using climbing protection.\n- whitewater-kayaking: The activity of paddling a kayak on whitewater (turbulent water).\n\nAlways adhere strictly to the provided enums when populating this parameter, as deviations will result in inaccurate search results.\n",
+            "schema": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "backpacking",
+                  "birding",
+                  "camping",
+                  "xc-skiing",
+                  "fishing",
+                  "hiking",
+                  "horses",
+                  "mountain-biking",
+                  "off-road-driving",
+                  "paddle-sports",
+                  "road-biking",
+                  "rock-climbing",
+                  "scenic-driving",
+                  "skiing",
+                  "snowshoeing",
+                  "trail-running",
+                  "walking",
+                  "bike-touring",
+                  "via-ferrata",
+                  "whitewater-kayaking"
+                ]
+              }
+            }
+          },
+          "features": {
+            "description": "The 'features' parameter is employed to filter trails based on specific characteristics or attributes they possess, either inherent to the trail or related to its accessibility/suitability.\n\nTo determine its values:\n1. Extract features directly mentioned by the user. For instance, if a user inquires about 'dog-friendly trails', by default, set `features` to ['dogs', 'dogs-leash']. However, pay close attention to the user's specific requirements regarding dogs:\n  - If a user specifies wanting trails where dogs are allowed without leashes, set `features` to ['dogs'] only.\n  - If a user specifies a preference for trails where dogs must be on leashes, set `features` to ['dogs-leash'] only.\n  - In the absence of specific instructions about leashes, include both ['dogs', 'dogs-leash'] to cover all dog-friendly trails.\n2. It's paramount to differentiate between `features` and `activities`. Activities, often identifiable by their '-ing' endings (like 'hiking'), should NEVER be categorized as features. Always cross-check with the provided enums to ensure correctness.\n3. If the user's mentioned features don't correspond loosely with the provided enums, inform them of the available feature options and request further details.\n\nHere is a dictionary for the feature enums and when they should be used:\n  - ada: Trail is disabilities-friendly (e.g. wheelchairs, wheelchair friendly...etc)\n  - beach: Trail has a beach on it.\n  - cave: Trail has a cave on it.\n  - dogs: Trail is dog friendly, doesn't require a leash. \n  - dogs-leash: Trail is dog friendly, but requires a leash.\n  - dogs-no: Trail is not dog friendly, no dogs are allowed.\n  - event: Trail is synonymous with events like races, marathons, or other challenges.\n  - forest: Trail has a forest on it OR trail is surrounded by a forest OR trail is by a forest.\n  - lake: Trail has a lake on it OR trail is by a lake.\n  - kids: Trail is kid/child friendly. \n  - hot-springs: Trail has hot springs on it.\n  - paved: Trail is paved.\n  - partially-paved: Trail is partially paved.\n  - rails-trails: Trail follows railroad rails.\n  - river: Trail has a river on it OR trail is by a river.\n  - strollers: Trail is stroller friendly.\n  - views: Trail has good views along it.\n  - waterfall: Trail has a waterfall on it OR trail is nearby a waterfall.\n  - wild-flowers: Trail has flowers on it.\n  - wildlife: Trail has wildlife (animals) on it.\n  - blowdown: Trail has been recently blown down and are blocking the path. Proceed with caution.\n  - bridge-out: Trail has a bridge that is no longer operational. Proceed with caution.\n  - bugs: Trail has bugs, or insects, on it.\n  - muddy: Trail, or part of it, is muddy.\n  - over-grown: Trail, or part of it, is overgrown with greenery.\n  - rocky: Trail, or part of it, is rocky.\n  - scramble: Trail has a difficult scramble feature.\n  - snow: Trail, or part of it, is snowy. \n  - washed-out: Trails that are washed out.\n  - off-trail: Trails that involve a lot of bush-whacking and route finding.\n  - no-shade: Trail doesn't have shady areas to hide from sun. \n  - city-walk: Trails going through the middle of cities.\n  - historic-site: Trail is located in or by a historic site.\n  - pub-crawl: Trails that are representative of pub crawls, the act of visiting multiple pubs or bars in a single session. Primarily used in the UK.\n  - fee: Trail is not free OR requires a ticket to be purchased in order to access.\n\nAlways adhere strictly to the provided enums when populating this parameter, as deviations will result in inaccurate search results.\n",
+            "schema": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ada",
+                  "beach",
+                  "cave",
+                  "dogs",
+                  "dogs-leash",
+                  "dogs-no",
+                  "event",
+                  "forest",
+                  "lake",
+                  "kids",
+                  "hot-springs",
+                  "paved",
+                  "partially-paved",
+                  "rails-trails",
+                  "river",
+                  "strollers",
+                  "views",
+                  "waterfall",
+                  "wild-flowers",
+                  "wildlife",
+                  "blowdown",
+                  "bridge-out",
+                  "bugs",
+                  "muddy",
+                  "over-grown",
+                  "rocky",
+                  "scramble",
+                  "snow",
+                  "washed-out",
+                  "off-trail",
+                  "no-shade",
+                  "city-walk",
+                  "historic-site",
+                  "pub-crawl",
+                  "fee"
+                ]
+              }
+            }
+          },
+          "query": {
+            "description": "The 'query' parameter is a text-based string used to filter trails by their names or other textual attributes.\n\nTo determine its value:\n1. Extract specific trail names or textual attributes mentioned by the user. For instance, if a user asks about the 'Lands End Trail', set `query` to 'lands-end'.\n2. Ensure that spaces in the user's query are replaced with dashes to maintain the required format.\n3. If the user does not specify a particular trail name or attribute, this parameter may be left empty or omitted.\n\nIt's essential to format this parameter correctly, as it directly influences the accuracy of the search results.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "difficulty_rating": {
+            "description": "The 'difficulty_rating' parameter represents the trail's level of difficulty. It is an integer value that can only be one of the following: \n\n1. `1` - Denotes an 'easy' trail.\n2. `3` - Represents a 'moderate' difficulty trail.\n3. `5` - Indicates a 'difficult' trail.\n4. `7` - Indicates a 'very difficult' trail.\n\nTo determine its value:\n1. Extract the user's mention of trail difficulty from their query. For instance, if a user asks for 'easy trails', set `difficulty_rating` to '1'.\n2. If the user specifies a difficulty not represented by the values 1, 3, 5, or 7, or mentions values like 2, 4, or 6, inform them of the available options and seek clarification.\n3. If the user does not specify a difficulty level, this parameter can be left empty or omitted.\n\nIt's crucial to adhere to the provided values to ensure accurate search results and avoid potential errors.\n",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                3,
+                5,
+                7
+              ]
+            }
+          },
+          "route_type": {
+            "description": "The 'route_type' parameter specifies the configuration or layout of the trail. It can take one of the following values:\n\n1. `L` - Represents a 'loop' trail, where the start and end points are the same.\n2. `O` - Denotes an 'out-and-back' trail, where one travels to a destination and then retraces their steps back to the starting point.\n3. `P` - Indicates a 'point-to-point' trail, where the trail starts and ends at different locations.\n\nTo determine its value:\n1. Extract the user's mention of the trail's route type from their query. For instance, if a user asks for 'loop trails', set `route_type` to 'L'.\n2. If the user specifies a route type not represented by the values L, O, or P, inform them of the available options and seek clarification.\n3. If the user does not specify a route type, this parameter can be left empty or omitted.\n\nEnsuring the correct value for 'route_type' is crucial for providing accurate trail recommendations based on the user's preferences.\n",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "L",
+                "O",
+                "P"
+              ]
+            }
+          },
+          "visitor_usage": {
+            "description": "Level of traffic on the trail. Can be one of: 1 (light), 2 (moderate), 3 (heavy), or 4 (extreme).",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4
+              ]
+            }
+          },
+          "length": {
+            "description": "The length of a trail in meters. For example, if user asks for 'trails that are 1 mile long', then `length`=1609.34. Perform arithmetic to calculate the total length of the trail as a trip, if needed.\n",
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "elevation_gain": {
+            "description": "The elevation gain of a trail in meters. For example, if user asks for 'trails with 6000 ft elevation gain', then `elevation_gain`=1828.8.\n",
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "highest_point": {
+            "description": "The highest point on a trail in meters. For example, if user asks for 'trails with highest point of 8000 ft', then `highest_point`=2438.4.\n",
+            "schema": {
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          "avg_rating": {
+            "description": "The 'avg_rating' parameter represents the average user rating for a trail, based on a 5-star scale.\n\nTo determine its value:\n1. Extract the user's mention of the desired trail rating from their query. For instance, if a user asks for 'trails rated 4.2 stars', set `avg_rating` to '4.2'.\n2. If the user specifies a rating outside the 1-5 range or provides a non-integer value, inform them of the available options and seek clarification.\n3. If the user does not specify a desired rating, this parameter can be left empty or omitted.\n\nIt's essential to accurately capture the 'avg_rating' to ensure that trail recommendations align with the user's expectations of quality.\n",
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "duration_minutes": {
+            "description": "The 'duration_minutes' parameter indicates the average time, in minutes, that AllTrails users typically take to complete a trail.\n\nTo determine its value:\n1. Extract the duration mentioned by the user in their query. For instance, if they ask for 'trails that can be completed in an hour', set `duration_minutes` to '60'.\n2. If the user does not specify a desired duration, this parameter can be left empty or omitted.\n\nIt's crucial to accurately capture 'duration_minutes' to align trail recommendations with the user's time preferences.\n",
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "num_trails": {
+            "description": "The 'num_trails' parameter specifies the number of trail recommendations the user wishes to receive.\n",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 3
+            }
+          },
+          "raw_query": {
+            "description": "The 'raw_query' parameter is essential and MUST be populated for every request.\n\nIt captures the user's query in its exact, unaltered form. This means capturing the user's input word for word without any modifications or omissions.\n\nFor instance, if a user says, 'Show me trails in San Francisco under 30 miles', the `raw_query` should be set to 'Show me trails in San Francisco under 30 miles'.\n\nAccurately recording the 'raw_query' ensures that the user's original intent is preserved and can be referenced if needed.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "description": "The 'filters' parameter is a vital component and MUST be populated for every request, even when it seems duplicative to do so. \nIt's an intricate Algiolia filter string tailored to refine search results based on user preferences.\n\nHere's how to construct the `filters` string:\n\n1. **Base Parameters**: The string is built using a combination of the specific parameters outlined elsewhere in this OpenAPI spec: `activities`, `features`, `difficulty_rating`, `route_type`, `visitor_usage`, `length`, `elevation_gain`, `highest_point`, `avg_rating`, and `duration_minutes`. Only these parameters should be integrated into the `filters` string.\n\n2. **Boolean Operators**: Use `AND` and `OR` operators to combine conditions. Always group conditions with parentheses for clarity. For example, for a query like 'Dog-friendly trails in San Francisco under 5 hours', the string would be: `(features:dogs OR features:dogs-leash) AND duration_minutes < 300`.\n\n3. **Numerical Parameters**: For parameters `length`, `elevation_gain`, `highest_point`, `avg_rating`, and `duration_minutes`, use \"=\" for exact matches and \"<\" or \">\" for comparisons. For instance, \"duration_minutes=360\" represents trails taking exactly 6 hours, whereas \"duration_minutes>240\" represents trails taking more than 4 hours. If the user asks for an approximate value, for example, \"Trails about 8 miles long,\" use a range of values to capture the user's intent. For instance, \"length>11265 AND length<14484\" represents trails between 7 and 9 miles long. Share this decision to use a range with the user.\n\n4. **Non-Numerical Parameters**: Use a colon \":\" for these. For instance, \"features:dogs\" or \"activities:backpacking\". Note: Treat `difficulty_rating` and `visitor_usage` as non-numerical. So, for 'easy to medium trails in Boulder with light to moderate trail traffic', the filter is: \"(difficulty_rating:1 OR difficulty_rating:3) AND (visitor_usage:1 OR visitor_usage:2)\".\n\n5. **Default Value**: If the user doesn't specify any filtering criteria, set the `filters` parameter to an empty string.\n\nIt's imperative to craft the `filters` string meticulously to ensure search results align perfectly with the user's requirements.\n",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        },
+        "required": [
+          "country_name",
+          "raw_query",
+          "filters"
+        ]
+      },
+      "Trail": {
+        "type": "object",
+        "properties": {
+          "trail_name": {
+            "description": "Represents the 'og:title' OpenGraph tag, which indicates the name of the trail. \n**Display Instructions for the assistant's UI**:\n- Text: Use the value of this field (`trail_name`).\n- Formatting: Bold the text.\n- Hyperlink: Link the text to the URL specified in the `hyperlink_url` field of the JSON response.\n- **Desired Output**: [**Trail Name from `trail_name`**](URL from `hyperlink_url`)\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "hyperlink_url": {
+            "description": "Represents the 'og:url' OpenGraph tag, which provides the URL associated with the trail.",
+            "schema": {
+              "type": "url"
+            }
+          },
+          "location": {
+            "description": "A comma-separated string that provides the full location of the trail, including components like city, state, and country.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "description": "Short description of the trail.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "difficulty_rating": {
+            "description": "The difficulty rating of the trail.",
+            "schema": {
+              "enum": [
+                "Easy",
+                "Medium",
+                "Difficult",
+                "Unknown"
+              ],
+              "type": "string"
+            }
+          },
+          "elevation_gain": {
+            "description": "The elevation gain of the trail.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "length": {
+            "description": "The length of the trail.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "estimated_completion_time": {
+            "description": "The estimated hiking time for trail completion.\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "star_rating": {
+            "description": "The average star rating of the trail by AllTrails users, fetched from AllTrails.\n",
+            "schema": {
+              "type": "number"
+            }
+          },
+          "image": {
+            "description": "A shortened URL to an image. \nTo access the image, make a GET request to image. The server will redirect this request to the actual image URL.\n",
+            "schema": {
+              "type": "url"
+            }
+          },
+          "geoloc": {
+            "description": "The latitude and longitude of the trail. DO NOT display this field to the user.\n",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lat": {
+                  "description": "The latitude of the trail.\n",
+                  "type": "number"
+                },
+                "lng": {
+                  "description": "The longitude of the trail.\n",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "trail_name",
+          "hyperlink_url",
+          "location",
+          "difficulty_rating",
+          "elevation_gain",
+          "length",
+          "estimated_completion_time",
+          "star_rating",
+          "geoloc"
+        ]
+      }
+    }
+  }
+}

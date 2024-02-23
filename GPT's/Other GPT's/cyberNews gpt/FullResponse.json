@@ -1,0 +1,425 @@
+{
+  "gizmo": {
+    "id": "g-6qXgmAdww",
+    "organization_id": "org-DQYsmB46uLWYhQoQyWFEGIXB",
+    "short_url": "g-6qXgmAdww-cybernews-gpt",
+    "author": {
+      "user_id": "user-x3IlsYeBU9VktnyLwCeB5pB4",
+      "display_name": "cybernewsgpt.com",
+      "link_to": "https://cybernewsgpt.com",
+      "selected_display": "website",
+      "is_verified": true,
+      "will_receive_support_emails": null
+    },
+    "voice": {
+      "id": "ember"
+    },
+    "workspace_id": null,
+    "model": null,
+    "instructions": null,
+    "settings": null,
+    "display": {
+      "name": "CyberNews GPT",
+      "description": "CyberNews GPT is an assistant that provides the latest security news about cyber threats, hackings and breaches, malware, zero-day vulnerabilities, phishing, scams and so on.",
+      "welcome_message": "",
+      "prompt_starters": [
+        "Get latest security news about 0-day vulnerabilities",
+        "What are the latest cyber breach events in 2023?",
+        "Can you provide timeline of the news of malware from 2021 to 2023?",
+        "When was the latest breach of Okta? Show me the timeline",
+        "Can you build me a timeline of malware highlights for each month in 2023?",
+        "What are the latest data breaches cases?"
+      ],
+      "profile_picture_url": "https://files.oaiusercontent.com/file-lXbSEn6f9TcfhFPaL5djGqWK?se=2123-11-05T12%3A31%3A07Z&sp=r&sv=2021-08-06&sr=b&rscc=max-age%3D31536000%2C%20immutable&rscd=attachment%3B%20filename%3D8f4a631f-699c-49f2-9d31-8ebabb498ea4.png&sig=nZGj%2BuuCwozsAS8e%2BtVVG3d2RneNyVECEvZs5a2yyGY%3D",
+      "categories": [
+        "other"
+      ]
+    },
+    "share_recipient": "marketplace",
+    "updated_at": "2024-01-09T00:16:54.000818+00:00",
+    "last_interacted_at": "2024-01-11T08:39:28.381587+00:00",
+    "tags": [
+      "public",
+      "reportable",
+      "uses_function_calls"
+    ],
+    "version": null,
+    "live_version": null,
+    "training_disabled": null,
+    "allowed_sharing_recipients": null,
+    "review_info": null,
+    "appeal_info": null,
+    "vanity_metrics": {
+      "num_conversations_str": "400+",
+      "num_pins": 0,
+      "num_users_interacted_with": 0
+    }
+  },
+  "tools": [
+    {
+      "id": "gzm_cnf_FKPVGBpSTgAQGB2dWtUleiTo~gzm_tool_ioARvEr8gWWFIiNKtkQmb3SO",
+      "type": "plugins_prototype",
+      "settings": null,
+      "metadata": {
+        "action_id": "g-edc3591d3d0a8dc4ee2fa82d0d540a04b84e7203",
+        "domain": "api.cybernewsgpt.com",
+        "raw_spec": {
+          "openapi": "3.1.0",
+          "info": {
+            "title": "OpenAPI",
+            "version": "3.1.0"
+          },
+          "paths": {
+            "/action/search": {
+              "post": {
+                "summary": "Action Search Post",
+                "description": "An asynchronous function that handles POST requests to the \"/action/search\" endpoint.",
+                "operationId": "action_search_post",
+                "x-openai-isConsequential": false,
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Keyword"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "Successful Response",
+                    "content": {
+                      "application/json": {
+                        "schema": {}
+                      }
+                    }
+                  },
+                  "422": {
+                    "description": "Validation Error",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/HTTPValidationError"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [
+                  {
+                    "HTTPBearer": []
+                  }
+                ]
+              }
+            },
+            "/action/search_by_dates": {
+              "post": {
+                "summary": "Action Search Post By Dates",
+                "description": "Endpoint for searching posts by dates.",
+                "operationId": "action_search_post_by_dates",
+                "x-openai-isConsequential": false,
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/KeywordDates"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "Successful Response",
+                    "content": {
+                      "application/json": {
+                        "schema": {}
+                      }
+                    }
+                  },
+                  "422": {
+                    "description": "Validation Error",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/HTTPValidationError"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [
+                  {
+                    "HTTPBearer": []
+                  }
+                ]
+              }
+            },
+            "/action/search_category_by_dates": {
+              "post": {
+                "summary": "Action Search Category By Dates",
+                "description": "Searches for posts in the database based on the given category and date range.",
+                "operationId": "action_search_category_by_dates",
+                "x-openai-isConsequential": false,
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/CategoryDates"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "Successful Response",
+                    "content": {
+                      "application/json": {
+                        "schema": {}
+                      }
+                    }
+                  },
+                  "422": {
+                    "description": "Validation Error",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/HTTPValidationError"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [
+                  {
+                    "HTTPBearer": []
+                  }
+                ]
+              }
+            },
+            "/action/search_by_month_of_year": {
+              "post": {
+                "summary": "Action Search By Month Of Year",
+                "description": "Searches for posts in the database based on the given month and year.",
+                "operationId": "action_search_by_month_of_year",
+                "x-openai-isConsequential": false,
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/MonthOfYear"
+                      }
+                    }
+                  },
+                  "required": true
+                },
+                "responses": {
+                  "200": {
+                    "description": "Successful Response",
+                    "content": {
+                      "application/json": {
+                        "schema": {}
+                      }
+                    }
+                  },
+                  "422": {
+                    "description": "Validation Error",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/HTTPValidationError"
+                        }
+                      }
+                    }
+                  }
+                },
+                "security": [
+                  {
+                    "HTTPBearer": []
+                  }
+                ]
+              }
+            }
+          },
+          "components": {
+            "schemas": {
+              "CategoryDates": {
+                "title": "CategoryDates",
+                "required": [
+                  "cat",
+                  "start_date",
+                  "end_date"
+                ],
+                "type": "object",
+                "properties": {
+                  "cat": {
+                    "title": "Cat",
+                    "type": "string"
+                  },
+                  "start_date": {
+                    "title": "Start Date",
+                    "type": "string"
+                  },
+                  "end_date": {
+                    "title": "End Date",
+                    "type": "string"
+                  }
+                }
+              },
+              "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                  "detail": {
+                    "title": "Detail",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ValidationError"
+                    }
+                  }
+                }
+              },
+              "Keyword": {
+                "title": "Keyword",
+                "required": [
+                  "keyword"
+                ],
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "title": "Keyword",
+                    "type": "string"
+                  }
+                }
+              },
+              "KeywordDates": {
+                "title": "KeywordDates",
+                "required": [
+                  "keyword",
+                  "start_date",
+                  "end_date"
+                ],
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "title": "Keyword",
+                    "type": "string"
+                  },
+                  "start_date": {
+                    "title": "Start Date",
+                    "type": "string"
+                  },
+                  "end_date": {
+                    "title": "End Date",
+                    "type": "string"
+                  }
+                }
+              },
+              "MonthOfYear": {
+                "title": "MonthOfYear",
+                "required": [
+                  "month",
+                  "year"
+                ],
+                "type": "object",
+                "properties": {
+                  "month": {
+                    "title": "Month",
+                    "type": "string"
+                  },
+                  "year": {
+                    "title": "Year",
+                    "type": "string"
+                  }
+                }
+              },
+              "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                  "loc",
+                  "msg",
+                  "type"
+                ],
+                "type": "object",
+                "properties": {
+                  "loc": {
+                    "title": "Location",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "msg": {
+                    "title": "Message",
+                    "type": "string"
+                  },
+                  "type": {
+                    "title": "Error Type",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "securitySchemes": {
+              "HTTPBearer": {
+                "type": "http",
+                "scheme": "bearer"
+              }
+            }
+          },
+          "servers": [
+            {
+              "url": "https://api.cybernewsgpt.com"
+            }
+          ]
+        },
+        "json_schema": null,
+        "auth": {
+          "type": "service_http",
+          "instructions": "",
+          "authorization_type": "bearer",
+          "verification_tokens": {},
+          "custom_auth_header": ""
+        },
+        "privacy_policy_url": "https://cybernewsgpt.com/privacy.html"
+      }
+    }
+  ],
+  "files": [],
+  "product_features": {
+    "attachments": {
+      "type": "retrieval",
+      "accepted_mime_types": [
+        "text/html",
+        "text/x-typescript",
+        "text/x-tex",
+        "text/x-script.python",
+        "text/x-java",
+        "text/x-c++",
+        "text/x-csharp",
+        "application/pdf",
+        "application/x-latext",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "text/javascript",
+        "text/x-php",
+        "text/markdown",
+        "text/x-ruby",
+        "text/x-sh",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/x-c",
+        "application/json",
+        "application/msword",
+        "text/plain"
+      ],
+      "image_mime_types": [
+        "image/png",
+        "image/webp",
+        "image/gif",
+        "image/jpeg"
+      ],
+      "can_accept_all_mime_types": true
+    }
+  }
+}

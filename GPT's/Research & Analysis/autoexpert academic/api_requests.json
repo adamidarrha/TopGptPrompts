@@ -1,0 +1,1 @@
+[{"method": "GET", "path": "/query", "url": "https://export.arxiv.org/api/query", "content_type": "application/json", "full_request": "GET https://export.arxiv.org/api/query HTTP/2\nContent-Type: application/json\n\n"}]

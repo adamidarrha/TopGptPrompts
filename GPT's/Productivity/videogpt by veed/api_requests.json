@@ -1,0 +1,1 @@
+[{"method": "POST", "path": "/generate", "url": "https://www.veed.io/text-to-video-ap/api/generate", "content_type": "application/json", "example_body": {}, "full_request": "POST https://www.veed.io/text-to-video-ap/api/generate HTTP/2\nContent-Type: application/json\n\n{}"}]
